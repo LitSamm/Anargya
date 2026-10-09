@@ -2,7 +2,7 @@ node_modules
 .env*
 !.env.example
 .next
-data/
+/data/
 *.duckdb
 *.duckdb.wal
 *.tsbuildinfo

@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  name          String
+  category      String
+  price         Float
+  originalPrice Float?
+  stock         Int         @default(0)
+  description   String?
+  imageUrl      String?
+  badge         String?
+  sizes         String?     // Comma-separated sizes e.g. "S,M,L,XL"
+  rating        Float       @default(5.0)
+  reviewsCount  Int         @default(0)
+  inStock       Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orderItems    OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique // e.g. ARG-2026-001
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  shippingAddress String?
+  courier         String?
+  paymentMethod   String?
+  totalAmount     Float
+  status          String      @default("Pending") // Pending, Confirmed, Shipped, Completed, Cancelled
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName  String
+  productPrice Float
+  productImage String?
+  selectedSize String?
+  quantity     Int      @default(1)
+  createdAt    DateTime @default(now())
+}

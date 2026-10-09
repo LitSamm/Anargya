@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'SF UI', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+
+  --main-dark: #121212;
+  --secondary-dark: #181818;
+  --secondary-gray: #282828;
+  --main-green: #29D970;
+  --dark-green: #153020;
+  --main-red: #EB413F;
+  --main-gray: #B3B3B3;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--main-dark);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar - Sleek Racing Minimal */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #29D970;
+}
+
+/* Background Subtle Gradient Glow matching Anargya official site */
+.bg-anargya-ambient {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image-overlay {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.46) 0%, rgba(0, 0, 0, 0.08) 32%, rgba(0, 0, 0, 0.2) 58%, rgba(0, 0, 0, 0.78) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.42) 42%, rgba(0, 0, 0, 0.08) 100%),
+    radial-gradient(ellipse at 78% 42%, rgba(41, 217, 112, 0.12), transparent 48%);
+}
+
+.futuristic-sidebar {
+  background-color: rgba(8, 12, 10, 0.94);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  backdrop-filter: blur(28px);
+}
+
+.futuristic-sidebar::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 0% 18%, rgba(41, 217, 112, 0.12), transparent 48%);
+  content: '';
+  pointer-events: none;
+}
+
+@keyframes sidebar-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Anargya button style from official web */
+.btn-anargya-primary {
+  background-color: var(--main-green);
+  color: var(--main-dark);
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.6rem 1.6rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-anargya-primary:hover {
+  box-shadow: 0 4px 20px rgba(41, 217, 112, 0.4);
+  gap: 0.65rem;
+}
+
+.btn-anargya-outline {
+  border: 1px solid var(--main-green);
+  color: var(--main-green);
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.6rem 1.6rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-anargya-outline:hover {
+  background-color: var(--main-green);
+  color: var(--main-dark);
+  gap: 0.65rem;
+}
+
+/* Clean Racing Cards matching anargyaits.com */
+.anargya-card {
+  background-color: var(--secondary-dark);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.anargya-card:hover {
+  border-color: rgba(41, 217, 112, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}

@@ -37,7 +37,7 @@ export const CarsSection: React.FC = () => {
           <div>
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight whitespace-nowrap">
-              The Formula <span className="text-main-red">Fleet</span>
+              The Formula <span className="text-main-green">Fleet</span>
             </h2>
           </div>
 

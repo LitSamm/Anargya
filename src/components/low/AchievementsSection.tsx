@@ -9,7 +9,7 @@ export const AchievementsSection: React.FC = () => {
   return (
     <section id="achievements" className="py-24 bg-main-dark border-t border-b border-white/10 font-sfui relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-4 leading-none">
@@ -21,7 +21,7 @@ export const AchievementsSection: React.FC = () => {
         </div>
 
         {/* Main Showcase Banner: Full Laurels Trophy Image Directly */}
-        <div className="mb-8 rounded-2xl bg-secondary-dark/60 border border-white/10 p-4 sm:p-8 lg:p-12 flex items-center justify-center">
+        <div className="mb-8 rounded-2xl bg-main-dark p-4 sm:p-8 lg:p-12 flex items-center justify-center">
           <img
             src="/images/achievements-anargya-2025.webp"
             alt="Anargya FSAE Japan Achievement Laurels"

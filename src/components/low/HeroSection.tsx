@@ -77,7 +77,7 @@ export const HeroSection: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/#cars"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-white bg-main-red px-6 sm:px-8 py-3.5 tracking-wider hover:bg-white hover:text-main-red transition-colors"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-main-dark bg-main-green px-6 sm:px-8 py-3.5 tracking-wider hover:bg-white hover:text-main-dark transition-colors"
           >
             Explore The Fleet
             <ArrowRight className="h-3 w-3" aria-hidden="true" />
@@ -92,9 +92,9 @@ export const HeroSection: React.FC = () => {
       </div>
     </section>
 
-    <div className="relative w-full bg-main-red">
+    <div className="relative w-full bg-main-green">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-main-dark/15">
           {[
             { label: 'Acceleration 0-100', value: '3.4', unit: 'sec' },
             { label: 'Top Speed', value: '125', unit: 'km/h' },
@@ -102,10 +102,10 @@ export const HeroSection: React.FC = () => {
             { label: 'Curb Weight', value: '198', unit: 'kg' },
           ].map((stat) => (
             <div key={stat.label} className="py-5 sm:py-6 px-4 sm:px-8 flex flex-col justify-center">
-              <span className="font-sfui text-[11px] font-semibold text-white/75 mb-1">
+              <span className="font-sfui text-[11px] font-bold text-main-dark/75 mb-1">
                 {stat.label}
               </span>
-              <div className="font-sfui text-2xl sm:text-4xl font-heavy text-white tabular-nums">
+              <div className="font-sfui text-2xl sm:text-4xl font-heavy text-main-dark tabular-nums">
                 <ScrambleNumber value={stat.value} />
                 <span className="font-sfui text-[10px] sm:text-sm font-bold ml-1.5 align-middle">{stat.unit}</span>
               </div>

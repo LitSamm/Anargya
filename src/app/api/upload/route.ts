@@ -85,16 +85,26 @@ export async function POST(request: Request) {
       });
     } catch {
       // In serverless environments like Vercel, the filesystem is read-only (EROFS).
-      // Fallback: convert file to a Data URL (base64) so it works seamlessly!
-      const mime = file.type || 'image/webp';
-      const base64 = buffer.toString('base64');
-      const dataUrl = `data:${mime};base64,${base64}`;
+      // Fallback: compress file with sharp and convert to a compact WebP Data URL
+      let compressedBuffer = buffer;
+      let outMime = file.type || 'image/webp';
+      try {
+        const sharp = (await import('sharp')).default;
+        compressedBuffer = await sharp(buffer)
+          .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toBuffer();
+        outMime = 'image/webp';
+      } catch {}
+
+      const base64 = compressedBuffer.toString('base64');
+      const dataUrl = `data:${outMime};base64,${base64}`;
 
       return NextResponse.json({
         success: true,
         url: dataUrl,
         fileName,
-        size: file.size,
+        size: compressedBuffer.length,
         isDataUrl: true,
       });
     }

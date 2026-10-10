@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import type { Product } from '@/types'
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 import defaultProducts from '@/data/products.json'
 
 export interface CreateProductInput {
@@ -51,8 +52,23 @@ type ProductRow = {
 }
 
 const LOCAL_PRODUCTS_PATH = path.join(process.cwd(), 'src', 'data', 'products.json')
+const TMP_PRODUCTS_PATH = path.join(os.tmpdir(), 'anargya_products.json')
+
+let memoryProducts: Product[] | null = null
 
 function readLocalProducts(): Product[] {
+  // 1. Check temporary writable file (persists across serverless lambdas in /tmp)
+  try {
+    if (fs.existsSync(TMP_PRODUCTS_PATH)) {
+      const data = fs.readFileSync(TMP_PRODUCTS_PATH, 'utf-8')
+      const parsed = JSON.parse(data)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+      }
+    }
+  } catch {}
+
+  // 2. Check local workspace file (local dev)
   try {
     if (fs.existsSync(LOCAL_PRODUCTS_PATH)) {
       const data = fs.readFileSync(LOCAL_PRODUCTS_PATH, 'utf-8')
@@ -61,17 +77,27 @@ function readLocalProducts(): Product[] {
         return parsed
       }
     }
-  } catch (err) {
-    console.error('Failed reading local products JSON:', err)
+  } catch {}
+
+  // 3. Fallback to memory or bundled default products
+  if (memoryProducts && memoryProducts.length > 0) {
+    return memoryProducts
   }
+
   return (defaultProducts as Product[]) || []
 }
 
 function writeLocalProducts(products: Product[]) {
+  memoryProducts = [...products]
   try {
     fs.writeFileSync(LOCAL_PRODUCTS_PATH, JSON.stringify(products, null, 2), 'utf-8')
-  } catch (err) {
-    console.error('Failed writing local products JSON:', err)
+  } catch {
+    // In serverless environments (EROFS), write to writable /tmp
+    try {
+      fs.writeFileSync(TMP_PRODUCTS_PATH, JSON.stringify(products, null, 2), 'utf-8')
+    } catch (err) {
+      console.error('Failed writing tmp products JSON:', err)
+    }
   }
 }
 

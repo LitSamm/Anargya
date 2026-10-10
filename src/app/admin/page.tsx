@@ -136,6 +136,43 @@ export default function AdminPage() {
     loadAssets();
   }, [loadAssets]);
 
+  const compressImageClient = (file: File, maxWidth = 1200, quality = 0.82): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const src = e.target?.result;
+        if (typeof src !== 'string') {
+          resolve('');
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(src);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/webp', quality);
+          resolve(compressed);
+        };
+        img.onerror = () => resolve(src);
+        img.src = src;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -144,6 +181,9 @@ export default function AdminPage() {
     setUploadError('');
 
     try {
+      // Compress file on client first to keep payload lightweight (~80-150KB)
+      const compressedDataUrl = await compressImageClient(file);
+
       const formData = new FormData();
       formData.append('file', file);
 
@@ -154,27 +194,21 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (res.ok && data.success && data.url) {
-        setNewProd((prev) => ({ ...prev, image: data.url }));
+        // If upload returned a public static URL (/uploads/...), use it.
+        // If on serverless where it returned a data URL, use our ultra-compact compressed data URL.
+        const finalUrl = data.url.startsWith('data:') && compressedDataUrl ? compressedDataUrl : data.url;
+        setNewProd((prev) => ({ ...prev, image: finalUrl }));
         loadAssets();
       } else {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const resStr = ev.target?.result;
-          if (typeof resStr === 'string') {
-            setNewProd((prev) => ({ ...prev, image: resStr }));
-          }
-        };
-        reader.readAsDataURL(file);
+        if (compressedDataUrl) {
+          setNewProd((prev) => ({ ...prev, image: compressedDataUrl }));
+        }
       }
     } catch {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const resStr = ev.target?.result;
-        if (typeof resStr === 'string') {
-          setNewProd((prev) => ({ ...prev, image: resStr }));
-        }
-      };
-      reader.readAsDataURL(file);
+      const compressedDataUrl = await compressImageClient(file);
+      if (compressedDataUrl) {
+        setNewProd((prev) => ({ ...prev, image: compressedDataUrl }));
+      }
     } finally {
       setIsUploading(false);
       e.target.value = '';

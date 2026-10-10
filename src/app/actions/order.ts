@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 
 export interface CreateOrderInput {
   orderNumber?: string
@@ -54,33 +55,62 @@ export type StoredOrder = {
 }
 
 const LOCAL_ORDERS_PATH = path.join(process.cwd(), 'src', 'data', 'orders.json')
+const TMP_ORDERS_PATH = path.join(os.tmpdir(), 'anargya_orders.json')
+
+let memoryOrders: StoredOrder[] | null = null
 
 function readLocalOrders(): StoredOrder[] {
+  // 1. Check temporary writable file (for serverless environments)
+  try {
+    if (fs.existsSync(TMP_ORDERS_PATH)) {
+      const data = fs.readFileSync(TMP_ORDERS_PATH, 'utf-8')
+      const parsed = JSON.parse(data)
+      if (Array.isArray(parsed)) {
+        return parsed.map((o: any) => ({
+          ...o,
+          createdAt: new Date(o.createdAt),
+          updatedAt: new Date(o.updatedAt),
+          items: (o.items || []).map((item: any) => ({
+            ...item,
+            createdAt: new Date(item.createdAt || o.createdAt),
+          })),
+        }))
+      }
+    }
+  } catch {}
+
+  // 2. Check workspace file (local dev)
   try {
     if (fs.existsSync(LOCAL_ORDERS_PATH)) {
       const data = fs.readFileSync(LOCAL_ORDERS_PATH, 'utf-8')
       const parsed = JSON.parse(data)
-      return parsed.map((o: any) => ({
-        ...o,
-        createdAt: new Date(o.createdAt),
-        updatedAt: new Date(o.updatedAt),
-        items: (o.items || []).map((item: any) => ({
-          ...item,
-          createdAt: new Date(item.createdAt || o.createdAt),
-        })),
-      }))
+      if (Array.isArray(parsed)) {
+        return parsed.map((o: any) => ({
+          ...o,
+          createdAt: new Date(o.createdAt),
+          updatedAt: new Date(o.updatedAt),
+          items: (o.items || []).map((item: any) => ({
+            ...item,
+            createdAt: new Date(item.createdAt || o.createdAt),
+          })),
+        }))
+      }
     }
-  } catch (err) {
-    console.error('Failed reading local orders JSON:', err)
-  }
-  return []
+  } catch {}
+
+  return memoryOrders || []
 }
 
 function writeLocalOrders(orders: StoredOrder[]) {
+  memoryOrders = [...orders]
   try {
     fs.writeFileSync(LOCAL_ORDERS_PATH, JSON.stringify(orders, null, 2), 'utf-8')
-  } catch (err) {
-    console.error('Failed writing local orders JSON:', err)
+  } catch {
+    try {
+      fs.writeFileSync(TMP_ORDERS_PATH, JSON.stringify(orders, null, 2), 'utf-8')
+    } catch (err) {
+      console.error('Failed writing tmp orders JSON:', err)
+    }
   }
 }
 

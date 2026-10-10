@@ -4,6 +4,11 @@ import path from "path";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ["duckdb"],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
   images: {
     domains: ["images.unsplash.com", "anargyaits.com"],
   },

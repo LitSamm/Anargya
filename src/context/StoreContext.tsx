@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, Order, OrderItem } from '../types';
+import { INITIAL_PRODUCTS } from '../data/mockData';
 import { getProducts } from '../app/actions/product';
 import { createOrder as createDbOrder } from '../app/actions/order';
 
@@ -37,7 +38,7 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'anargya_cart';
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [isOffline, setIsOffline] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<any>(null);

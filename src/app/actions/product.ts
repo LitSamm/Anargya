@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import type { Product } from '@/types'
 import fs from 'fs'
 import path from 'path'
+import defaultProducts from '@/data/products.json'
 
 export interface CreateProductInput {
   name: string
@@ -48,8 +49,6 @@ type ProductRow = {
   reviewsCount: number
   inStock: boolean
 }
-
-import defaultProducts from '@/data/products.json'
 
 const LOCAL_PRODUCTS_PATH = path.join(process.cwd(), 'src', 'data', 'products.json')
 

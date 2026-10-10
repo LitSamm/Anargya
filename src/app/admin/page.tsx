@@ -157,10 +157,22 @@ export default function AdminPage() {
         setNewProd((prev) => ({ ...prev, image: data.url }));
         loadAssets();
       } else {
-        setUploadError(data.error || 'Failed to upload image');
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          if (ev.target?.result) {
+            setNewProd((prev) => ({ ...prev, image: ev.target.result as string }));
+          }
+        };
+        reader.readAsDataURL(file);
       }
     } catch {
-      setUploadError('Network error uploading file');
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) {
+          setNewProd((prev) => ({ ...prev, image: ev.target.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
     } finally {
       setIsUploading(false);
       e.target.value = '';

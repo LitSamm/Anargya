@@ -1,76 +1,88 @@
 # Anargya Platform
 
-Website Anargya Formula Student yang dibuat dengan Next.js, React, dan TypeScript.
+Platform digital resmi dan merchandise store untuk **Anargya ITS EV Team** (Formula Student Electric Vehicle Team, Institut Teknologi Sepuluh Nopember Surabaya). Dibuat menggunakan **Next.js 15**, **React 19**, **TypeScript**, dan **Tailwind CSS**.
 
-## Persyaratan
+---
 
-- Node.js 22 atau lebih baru
-- npm
-- PostgreSQL lokal atau server PostgreSQL yang dapat diakses aplikasi
+## Fitur Utama
 
-Proyek menggunakan PostgreSQL melalui Prisma untuk data produk dan pesanan. Endpoint katalog juga menggunakan DuckDB lokal; file database `data/anargya.duckdb` dibuat otomatis saat endpoint tersebut pertama kali dijalankan dan katalog awal akan diisi otomatis.
+- 🏎️ **Fleet Showcase**: Informasi spesifikasi teknis dan histori mobil balap Formula EV (Mark 1.0 hingga Mark 6.0).
+- 🛍️ **Official Merchandise Store**: Katalog produk, varian ukuran, dan keranjang belanja interaktif.
+- 💳 **Online Checkout**: Formulir pemesanan dengan kalkulasi otomatis dan integrasi WhatsApp.
+- ⚙️ **Admin Dashboard**: Manajemen produk (tambah, edit, hapus, upload foto) dan pemantauan status pesanan.
+- 📱 **PWA Ready**: Mendukung Progressive Web App untuk pengalaman akses cepat di perangkat mobile.
 
-## Menjalankan di lingkungan lokal
+---
 
-1. Pasang dependensi:
+## Persyaratan Sistem
 
-   ```powershell
-   npm install
-   ```
+- **Node.js**: v20 atau lebih baru (direkomendasikan v22)
+- **npm** atau package manager kompatibel
+- *(Opsional)* **PostgreSQL**: Jika ingin menggunakan database relasional penuh untuk produksi.
 
-2. Salin file contoh environment:
+> **Catatan Database:** Aplikasi sudah dilengkapi dengan sistem **Local JSON Fallback**. Jika PostgreSQL tidak dikonfigurasi, aplikasi tetap dapat dijalankan penuh untuk keperluan pengembangan lokal menggunakan penyimpanan file lokal (`src/data/`).
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
+---
 
-3. Edit `.env` dan atur koneksi PostgreSQL. Buat database `anargya_db` terlebih dahulu, lalu isi kedua variabel berikut dengan connection string yang sesuai:
+## Cara Menjalankan di Lingkungan Lokal
 
-   ```dotenv
-   DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/anargya_db?schema=public"
-   DIRECT_URL="postgresql://USER:PASSWORD@localhost:5432/anargya_db?schema=public"
-   ```
-
-   Ganti `postgres`, `password`, host, port, dan nama database sesuai konfigurasi PostgreSQL Anda. Untuk setup lokal standar, `DATABASE_URL` dan `DIRECT_URL` dapat menggunakan URL yang sama.
-
-4. Buat/generasikan Prisma Client dan sinkronkan skema ke database:
-
-   ```powershell
-   npx prisma generate
-   npx prisma db push
-   ```
-
-5. Jalankan server pengembangan:
-
-   ```powershell
-   npm run dev
-   ```
-
-6. Buka [http://localhost:3000](http://localhost:3000).
-
-## Halaman dan akun admin
-
-- Halaman utama: `/`
-- Toko: `/store`
-- Panel admin: `/admin`
-
-Secara default, kredensial admin lokal adalah:
-
-- Username: `admin`
-- Password: `anargya2026`
-
-Anda dapat menggantinya melalui `ADMIN_USER` dan `ADMIN_PASSWORD` di `.env`. `ADMIN_SECRET` dapat diatur untuk kunci penandatanganan sesi. Nilai bawaan hanya untuk pengembangan lokal; ganti semua nilai tersebut sebelum deployment.
-
-## Perintah lain
-
-```powershell
-npm run build    # Membuat build production
-npm run start    # Menjalankan build production (jalankan npm run build terlebih dahulu)
-npm run lint     # Menjalankan lint Next.js
+### 1. Pasang Dependensi
+```bash
+npm install
 ```
 
-## Data lokal
+### 2. Buat File Environment
+Salin template konfigurasi:
+```bash
+# Untuk Linux / macOS / Git Bash:
+cp .env.example .env
 
-- Skema PostgreSQL didefinisikan di `prisma/schema.prisma`.
-- DuckDB disimpan di `data/anargya.duckdb`; aplikasi membuat tabel dan data produk awal secara otomatis jika diperlukan.
-- Jangan hapus database DuckDB jika ingin mempertahankan data katalog yang telah tersimpan.
+# Atau untuk Windows PowerShell:
+Copy-Item .env.example .env
+```
+
+### 3. Konfigurasi Database (Opsional)
+Jika Anda menggunakan PostgreSQL, buat database `anargya_db` dan sesuaikan connection string di `.env`:
+```dotenv
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/anargya_db?schema=public"
+DIRECT_URL="postgresql://USER:PASSWORD@localhost:5432/anargya_db?schema=public"
+```
+
+Lalu sinkronkan skema database:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+*(Jika tidak menggunakan PostgreSQL, lewati langkah ini — aplikasi akan otomatis menggunakan penyimpanan lokal).*
+
+### 4. Jalankan Development Server
+```bash
+npm run dev
+```
+Buka browser di [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Halaman & Akun Admin
+
+- **Halaman Utama**: `/`
+- **Official Store**: `/store`
+- **Admin Dashboard**: `/admin`
+
+### Kredensial Default Admin:
+- **Username**: `admin`
+- **Password**: `anargya2026`
+
+> Anda dapat mengubah kredensial melalui variabel `ADMIN_USER`, `ADMIN_PASSWORD`, dan `ADMIN_SECRET` di file `.env`.
+
+---
+
+## Perintah Tersedia
+
+```bash
+npm run dev      # Menjalankan server pengembangan lokal
+npm run build    # Membuat bundle build untuk produksi
+npm run start    # Menjalankan production server hasil build
+npm run lint     # Menjalankan ESLint & type checking
+```

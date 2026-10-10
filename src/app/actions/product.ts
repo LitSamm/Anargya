@@ -49,18 +49,23 @@ type ProductRow = {
   inStock: boolean
 }
 
+import defaultProducts from '@/data/products.json'
+
 const LOCAL_PRODUCTS_PATH = path.join(process.cwd(), 'src', 'data', 'products.json')
 
 function readLocalProducts(): Product[] {
   try {
     if (fs.existsSync(LOCAL_PRODUCTS_PATH)) {
       const data = fs.readFileSync(LOCAL_PRODUCTS_PATH, 'utf-8')
-      return JSON.parse(data)
+      const parsed = JSON.parse(data)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+      }
     }
   } catch (err) {
     console.error('Failed reading local products JSON:', err)
   }
-  return []
+  return (defaultProducts as Product[]) || []
 }
 
 function writeLocalProducts(products: Product[]) {

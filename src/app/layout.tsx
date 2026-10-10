@@ -15,6 +15,15 @@ const sfUi = localFont({
   display: 'swap',
 });
 
+const codecCold = localFont({
+  src: [
+    { path: '../../public/fonts/CodecCold-900.ttf', weight: '900', style: 'normal' },
+    { path: '../../public/fonts/CodecCold-1000.ttf', weight: '1000', style: 'normal' },
+  ],
+  variable: '--font-codec-cold',
+  display: 'swap',
+});
+
 
 export const metadata: Metadata = {
   title: 'Anargya ITS EV Team: Formula Student Electric Vehicle',
@@ -85,7 +94,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Anargya" />
       </head>
-      <body className={`${sfUi.variable} bg-main-dark text-white antialiased min-h-screen flex flex-col justify-between selection:bg-main-green selection:text-main-dark pb-16 lg:pb-0 font-sfui`}>
+      <body className={`${sfUi.variable} ${codecCold.variable} bg-main-dark text-white antialiased min-h-screen flex flex-col justify-between selection:bg-main-green selection:text-main-dark pb-16 lg:pb-0 font-sfui`}>
         <StoreProvider>
           <ToastContainer />
           {children}

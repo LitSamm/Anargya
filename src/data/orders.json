@@ -1,0 +1,83 @@
+[
+  {
+    "id": "ord-1791644249653",
+    "orderNumber": "ARG-2026-152",
+    "customerName": "Test Buyer",
+    "customerEmail": "test@anargya.its.ac.id",
+    "customerPhone": null,
+    "shippingAddress": null,
+    "courier": null,
+    "paymentMethod": null,
+    "totalAmount": 115000,
+    "status": "Pending",
+    "createdAt": "2026-10-10T14:57:29.653Z",
+    "updatedAt": "2026-10-10T14:57:29.653Z",
+    "items": [
+      {
+        "id": "item-1791644249653-0",
+        "orderId": "ord-1791644249653",
+        "productId": "prod-tee-blueprint",
+        "productName": "Mark 5.0 Blueprint Tee",
+        "productPrice": 115000,
+        "productImage": null,
+        "selectedSize": null,
+        "quantity": 1,
+        "createdAt": "2026-10-10T14:57:29.653Z"
+      }
+    ]
+  },
+  {
+    "id": "ord-1791644169940",
+    "orderNumber": "ARG-2026-553",
+    "customerName": "rafi",
+    "customerEmail": "aaa@gmail.com",
+    "customerPhone": "+623891913",
+    "shippingAddress": "raya sukolilo, Surabaya",
+    "courier": "JNE Express (Next Day - Rp 18.000)",
+    "paymentMethod": "QRIS Instant Payment",
+    "totalAmount": 207000,
+    "status": "Pending",
+    "createdAt": "2026-10-10T14:56:09.940Z",
+    "updatedAt": "2026-10-10T14:56:09.940Z",
+    "items": [
+      {
+        "id": "item-1791644169940-0",
+        "orderId": "ord-1791644169940",
+        "productId": "prod-tumbler-racing",
+        "productName": "Anargya Achievement Tumbler",
+        "productPrice": 189000,
+        "productImage": "/images/Tumbler.webp",
+        "selectedSize": null,
+        "quantity": 1,
+        "createdAt": "2026-10-10T14:56:09.940Z"
+      }
+    ]
+  },
+  {
+    "id": "ord-1791644114312",
+    "orderNumber": "ARG-2026-518",
+    "customerName": "Test Buyer",
+    "customerEmail": "test@anargya.its.ac.id",
+    "customerPhone": null,
+    "shippingAddress": null,
+    "courier": null,
+    "paymentMethod": null,
+    "totalAmount": 115000,
+    "status": "Pending",
+    "createdAt": "2026-10-10T14:55:14.312Z",
+    "updatedAt": "2026-10-10T14:55:14.312Z",
+    "items": [
+      {
+        "id": "item-1791644114312-0",
+        "orderId": "ord-1791644114312",
+        "productId": "prod-tee-blueprint",
+        "productName": "Mark 5.0 Blueprint Tee",
+        "productPrice": 115000,
+        "productImage": null,
+        "selectedSize": null,
+        "quantity": 1,
+        "createdAt": "2026-10-10T14:55:14.312Z"
+      }
+    ]
+  }
+]

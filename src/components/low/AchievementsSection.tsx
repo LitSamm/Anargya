@@ -23,7 +23,7 @@ export const AchievementsSection: React.FC = () => {
         {/* Main Showcase Banner: Full Laurels Trophy Image Directly */}
         <div className="mb-8 rounded-2xl bg-secondary-dark/60 border border-white/10 p-4 sm:p-8 lg:p-12 flex items-center justify-center">
           <img
-            src="/images/achievements-anargya-2025.png"
+            src="/images/achievements-anargya-2025.webp"
             alt="Anargya FSAE Japan Achievement Laurels"
             className="w-full max-h-[520px] object-contain filter drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)]"
           />

@@ -43,7 +43,7 @@ export const HeroSection: React.FC = () => {
     <section className="relative h-[100svh] flex flex-col justify-end overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 z-0">
         <img
-          src="/images/FSAE_2025_ascii.png"
+          src="/images/FSAE_2025_ascii.webp"
           alt=""
           className="h-full w-full object-cover object-[68%_center]"
         />
@@ -57,13 +57,18 @@ export const HeroSection: React.FC = () => {
       </div>
 
       <div className="relative z-20 flex flex-col items-center gap-8 px-6 md:px-12 lg:px-24 pb-12 md:pb-16 lg:pb-24">
-        <div className="flex justify-center">
-          <h1 className="font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-main-green tracking-tight leading-tight text-center drop-shadow-[0_0_30px_rgba(41,217,112,0.9)] drop-shadow-[0_0_60px_rgba(41,217,112,0.5)]">
-            Anargya
+        <div className="flex w-full justify-center">
+          <h1
+            className="font-codec-cold font-medium uppercase select-none text-center text-4xl sm:text-6xl md:text-7xl lg:text-[80px] leading-none text-main-green"
+            style={{
+              filter: 'drop-shadow(0 0 30px rgba(41, 217, 112, 0.9)) drop-shadow(0 0 60px rgba(41, 217, 112, 0.45))',
+            }}
+          >
+            ANARGYA
           </h1>
         </div>
 
-        <p className="font-sfui text-white text-sm md:text-lg lg:text-xl text-center tracking-tight leading-relaxed max-w-5xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+        <p className="font-sfui text-white text-sm md:text-lg lg:text-xl text-center tracking-tight leading-relaxed max-w-5xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] drop-shadow-[0_0_20px_rgba(41,217,112,0.22)]">
           Anargya is a student team from Institut Teknologi Sepuluh Nopember focused on building and
           developing innovative electric formula cars for the future of racing. Founded in 2018, Anargya
           has grown into a consistent competitor at Formula SAE Japan, representing Indonesia on the international stage.

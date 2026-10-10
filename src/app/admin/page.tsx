@@ -1,37 +1,45 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Navbar } from '../../components/common/Navbar';
 import { Footer } from '../../components/common/Footer';
 import { ScrollReveal } from '../../components/common/ScrollReveal';
 import { PWAInstallBanner } from '../../components/high/PWAInstallBanner';
 import { MobileBottomNav } from '../../components/high/MobileBottomNav';
-import { useStore } from '../../context/StoreContext';
-import { Product, Order } from '../../types';
-import { 
-  Plus, 
-  Trash2, 
+import { Product } from '../../types';
+import {
+  getProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from '../actions/product';
+import { getOrders, updateOrderStatus, deleteOrder } from '../actions/order';
+import {
+  Plus,
+  Trash2,
   ArrowLeft,
   X,
   PackageOpen,
   LogOut,
   Lock,
+  Upload,
+  Image as ImageIcon,
+  Check,
+  Loader2,
+  Link2,
+  Sparkles,
 } from 'lucide-react';
 
-export default function AdminPage() {
-  const { 
-    products, 
-    orders, 
-    updateOrderStatus, 
-    deleteOrder, 
-    addProduct, 
-    deleteProduct, 
-    updateProduct 
-  } = useStore();
+type OrdersResult = Awaited<ReturnType<typeof getOrders>>;
+type AdminOrder = NonNullable<OrdersResult['data']>[number];
 
+export default function AdminPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [activeTab, setActiveTab] = useState<'orders' | 'products'>('orders');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [actionError, setActionError] = useState('');
 
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -39,6 +47,12 @@ export default function AdminPage() {
   const [loginPass, setLoginPass] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const loadDashboard = useCallback(async () => {
+    const [productsRes, ordersRes] = await Promise.all([getProducts(), getOrders()]);
+    if (productsRes.success && productsRes.data) setProducts(productsRes.data);
+    if (ordersRes.success && ordersRes.data) setOrders(ordersRes.data);
+  }, []);
 
   useEffect(() => {
     fetch('/api/admin/check')
@@ -48,6 +62,10 @@ export default function AdminPage() {
       })
       .catch(() => setIsAuthenticated(false));
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) loadDashboard();
+  }, [isAuthenticated, loadDashboard]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +96,7 @@ export default function AdminPage() {
     await fetch('/api/admin/logout', { method: 'POST' });
     setIsAuthenticated(false);
   };
+
   // New product form state
   const [newProd, setNewProd] = useState({
     name: '',
@@ -85,10 +104,68 @@ export default function AdminPage() {
     price: 150000,
     stock: 25,
     description: '',
-    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
+    image: '/images/Tee.webp',
     badge: 'Limited 9th Gen' as Product['badge'],
     inStock: true,
   });
+
+  // Image upload and assets state
+  const [imageMode, setImageMode] = useState<'upload' | 'assets' | 'url'>('upload');
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [availableAssets, setAvailableAssets] = useState<Array<{ name: string; url: string; category: string }>>([
+    { name: 'Blueprint Tee', url: '/images/Tee.webp', category: 'Team Assets' },
+    { name: 'Sticker Pack', url: '/images/Sticker Pack.webp', category: 'Team Assets' },
+    { name: 'Achievement Tumbler', url: '/images/Tumbler.webp', category: 'Team Assets' },
+    { name: 'Logo Enamel Pin', url: '/images/enamel.webp', category: 'Team Assets' },
+  ]);
+
+  const loadAssets = useCallback(async () => {
+    try {
+      const res = await fetch('/api/upload');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.items)) {
+        setAvailableAssets(data.items);
+      }
+    } catch (err) {
+      console.error('Failed loading media assets', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAssets();
+  }, [loadAssets]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.url) {
+        setNewProd((prev) => ({ ...prev, image: data.url }));
+        loadAssets();
+      } else {
+        setUploadError(data.error || 'Failed to upload image');
+      }
+    } catch {
+      setUploadError('Network error uploading file');
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
 
   const formatIDR = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -103,24 +180,31 @@ export default function AdminPage() {
   const pendingOrdersCount = orders.filter((o) => o.status === 'Pending').length;
   const inStockCount = products.filter((p) => p.inStock).length;
 
-  const handleCreateProduct = (e: React.FormEvent) => {
+  const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProd.name || !newProd.description) {
       alert('Please fill out all product fields.');
       return;
     }
 
-    addProduct({
+    setActionError('');
+    const res = await createProduct({
       name: newProd.name,
       category: newProd.category,
       price: Number(newProd.price),
       stock: Number(newProd.stock),
       description: newProd.description,
-      image: newProd.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
+      imageUrl: newProd.image || undefined,
       badge: newProd.badge,
       inStock: newProd.stock > 0,
     });
 
+    if (!res.success) {
+      setActionError(res.error || 'Failed to create product');
+      return;
+    }
+
+    await loadDashboard();
     setIsAddModalOpen(false);
     setNewProd({
       name: '',
@@ -128,10 +212,52 @@ export default function AdminPage() {
       price: 150000,
       stock: 25,
       description: '',
-      image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
+      image: '/images/Tee.webp',
       badge: 'Limited 9th Gen',
       inStock: true,
     });
+  };
+
+  const handleUpdateProduct = async (id: string, patch: Partial<Product>) => {
+    setActionError('');
+    const res = await updateProduct(id, patch);
+    if (!res.success) {
+      setActionError(res.error || 'Failed to update product');
+      return;
+    }
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  };
+
+  const handleDeleteProduct = async (id: string, name: string) => {
+    if (!confirm(`Delete ${name}?`)) return;
+    setActionError('');
+    const res = await deleteProduct(id);
+    if (!res.success) {
+      setActionError(res.error || 'Failed to delete product');
+      return;
+    }
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleUpdateOrderStatus = async (id: string, status: string) => {
+    setActionError('');
+    const res = await updateOrderStatus(id, status);
+    if (!res.success) {
+      setActionError(res.error || 'Failed to update order');
+      return;
+    }
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
+  };
+
+  const handleDeleteOrder = async (id: string, orderNumber: string) => {
+    if (!confirm(`Delete order ${orderNumber}?`)) return;
+    setActionError('');
+    const res = await deleteOrder(id);
+    if (!res.success) {
+      setActionError(res.error || 'Failed to delete order');
+      return;
+    }
+    setOrders((prev) => prev.filter((o) => o.id !== id));
   };
 
   return (
@@ -242,9 +368,15 @@ export default function AdminPage() {
               </div>
             </div>
 
+        {actionError && (
+          <div className="mb-6 p-3 rounded-xl bg-main-red/10 border border-main-red/30 text-main-red text-xs font-medium text-center">
+            {actionError}
+          </div>
+        )}
+
         {/* Telemetry Metrics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          
+
           <div className="glass-panel p-5 rounded-2xl border-white/10">
             <span className="text-[11px] font-mono text-gray-400 block mb-1 uppercase tracking-wider">
               Total Order Revenue
@@ -337,7 +469,6 @@ export default function AdminPage() {
                 const isPending = order.status === 'Pending';
                 const isConfirmed = order.status === 'Confirmed';
                 const isShipped = order.status === 'Shipped';
-                const isCompleted = order.status === 'Completed';
 
                 return (
                   <div
@@ -348,7 +479,7 @@ export default function AdminPage() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-sm font-black text-main-green">
-                          #{order.id}
+                          #{order.orderNumber}
                         </span>
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
                           isPending
@@ -380,9 +511,9 @@ export default function AdminPage() {
 
                       {/* Items */}
                       <div className="flex flex-wrap gap-2 pt-1">
-                        {order.items.map((item, idx) => (
+                        {order.items.map((item) => (
                           <span
-                            key={idx}
+                            key={item.id}
                             className="px-2 py-1 rounded bg-black/40 border border-white/10 text-[11px] text-gray-300 font-mono"
                           >
                             {item.quantity}x {item.productName} {item.selectedSize ? `(${item.selectedSize})` : ''}
@@ -407,7 +538,7 @@ export default function AdminPage() {
                       <div className="flex items-center gap-2">
                         <select
                           value={order.status}
-                          onChange={(e: any) => updateOrderStatus(order.id, e.target.value)}
+                          onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
                           className="px-3 py-1.5 rounded-xl bg-card-dark border border-white/20 text-xs font-mono text-white focus:border-main-green focus:outline-none cursor-pointer"
                         >
                           <option value="Pending">Set Pending</option>
@@ -417,11 +548,7 @@ export default function AdminPage() {
                         </select>
 
                         <button
-                          onClick={() => {
-                            if (confirm(`Delete order ${order.id}?`)) {
-                              deleteOrder(order.id);
-                            }
-                          }}
+                          onClick={() => handleDeleteOrder(order.id, order.orderNumber)}
                           className="p-2 rounded-xl text-gray-500 hover:text-main-red hover:bg-white/5 transition-colors"
                           title="Delete Order"
                         >
@@ -471,11 +598,7 @@ export default function AdminPage() {
                         value={prod.stock}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          updateProduct({
-                            ...prod,
-                            stock: val,
-                            inStock: val > 0,
-                          });
+                          handleUpdateProduct(prod.id, { stock: val, inStock: val > 0 });
                         }}
                         className="w-14 px-1.5 py-0.5 rounded bg-black/60 border border-white/20 text-white font-mono text-xs text-center"
                       />
@@ -483,12 +606,7 @@ export default function AdminPage() {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => {
-                          updateProduct({
-                            ...prod,
-                            inStock: !prod.inStock,
-                          });
-                        }}
+                        onClick={() => handleUpdateProduct(prod.id, { inStock: !prod.inStock })}
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           prod.inStock
                             ? 'bg-main-green/20 text-main-green border border-main-green/30'
@@ -499,11 +617,7 @@ export default function AdminPage() {
                       </button>
 
                       <button
-                        onClick={() => {
-                          if (confirm(`Delete ${prod.name}?`)) {
-                            deleteProduct(prod.id);
-                          }
-                        }}
+                        onClick={() => handleDeleteProduct(prod.id, prod.name)}
                         className="p-1 rounded text-gray-500 hover:text-main-red"
                         title="Delete product"
                       >
@@ -554,7 +668,7 @@ export default function AdminPage() {
                   <label className="block text-gray-300 mb-1">Category</label>
                   <select
                     value={newProd.category}
-                    onChange={(e: any) => setNewProd({ ...newProd, category: e.target.value })}
+                    onChange={(e) => setNewProd({ ...newProd, category: e.target.value as Product['category'] })}
                     className="w-full px-3 py-2 rounded-xl bg-secondary-dark border border-white/10 text-white focus:border-main-green focus:outline-none"
                   >
                     <option value="Apparel">Apparel</option>
@@ -567,7 +681,7 @@ export default function AdminPage() {
                   <label className="block text-gray-300 mb-1">Badge</label>
                   <select
                     value={newProd.badge}
-                    onChange={(e: any) => setNewProd({ ...newProd, badge: e.target.value })}
+                    onChange={(e) => setNewProd({ ...newProd, badge: e.target.value as Product['badge'] })}
                     className="w-full px-3 py-2 rounded-xl bg-secondary-dark border border-white/10 text-white focus:border-main-green focus:outline-none"
                   >
                     <option value="Limited 9th Gen">Limited 9th Gen</option>
@@ -604,15 +718,151 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-300 mb-1">Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={newProd.image}
-                  onChange={(e) => setNewProd({ ...newProd, image: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary-dark border border-white/10 text-white focus:border-main-green focus:outline-none font-mono text-[11px]"
-                />
+              {/* Enhanced Product Image Section: Upload from Local, Pick Asset, or URL */}
+              <div className="rounded-2xl border border-white/10 bg-secondary-dark/60 p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-gray-300 font-bold text-xs">
+                    Product Image *
+                  </label>
+                  <div className="flex bg-black/40 p-0.5 rounded-lg border border-white/10 text-[10px]">
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('upload')}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors ${
+                        imageMode === 'upload'
+                          ? 'bg-main-green text-main-dark font-bold'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <Upload className="w-3 h-3" />
+                      Upload File
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('assets')}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors ${
+                        imageMode === 'assets'
+                          ? 'bg-main-green text-main-dark font-bold'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <ImageIcon className="w-3 h-3" />
+                      Team Assets
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('url')}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors ${
+                        imageMode === 'url'
+                          ? 'bg-main-green text-main-dark font-bold'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <Link2 className="w-3 h-3" />
+                      URL
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mode 1: Upload via Local Files */}
+                {imageMode === 'upload' && (
+                  <div>
+                    <label className="relative flex flex-col items-center justify-center border-2 border-dashed border-white/20 hover:border-main-green/60 rounded-xl p-4 cursor-pointer bg-black/30 hover:bg-black/50 transition-all group">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+                        onChange={handleFileUpload}
+                        disabled={isUploading}
+                        className="sr-only"
+                      />
+                      {isUploading ? (
+                        <div className="flex flex-col items-center gap-2 py-2">
+                          <Loader2 className="w-6 h-6 text-main-green animate-spin" />
+                          <span className="text-gray-300 font-mono text-[11px]">Uploading file to server...</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1.5 text-center">
+                          <div className="p-2 rounded-full bg-main-green/10 text-main-green group-hover:scale-110 transition-transform">
+                            <Upload className="w-5 h-5" />
+                          </div>
+                          <span className="text-white font-medium text-xs">Click to browse or drop an image</span>
+                          <span className="text-gray-400 text-[10px]">Supports WEBP, PNG, JPG, SVG up to 15MB</span>
+                        </div>
+                      )}
+                    </label>
+                    {uploadError && (
+                      <p className="mt-1.5 text-[11px] text-main-red font-mono">{uploadError}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Mode 2: Choose from Team Assets */}
+                {imageMode === 'assets' && (
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-gray-400">
+                      Pick directly from public assets (including Tee, Sticker Pack, Tumbler, Enamel Pin):
+                    </p>
+                    <div className="grid grid-cols-4 gap-2 max-h-36 overflow-y-auto p-1 bg-black/30 rounded-xl border border-white/5 custom-scrollbar">
+                      {availableAssets.map((asset) => {
+                        const isSelected = newProd.image === asset.url;
+                        return (
+                          <button
+                            key={asset.url}
+                            type="button"
+                            onClick={() => setNewProd({ ...newProd, image: asset.url })}
+                            className={`group relative rounded-lg overflow-hidden border p-1 flex flex-col items-center text-left transition-all ${
+                              isSelected
+                                ? 'border-main-green bg-main-green/15 ring-2 ring-main-green/30'
+                                : 'border-white/10 hover:border-white/30 bg-black/40'
+                            }`}
+                          >
+                            <img
+                              src={asset.url}
+                              alt={asset.name}
+                              className="w-full h-12 object-contain rounded bg-black/60"
+                            />
+                            <span className="mt-1 text-[9px] font-mono text-gray-300 truncate w-full text-center">
+                              {asset.name}
+                            </span>
+                            {isSelected && (
+                              <div className="absolute top-1 right-1 bg-main-green text-main-dark rounded-full p-0.5 shadow-md">
+                                <Check className="w-2.5 h-2.5 stroke-[3]" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Mode 3: Custom URL */}
+                {imageMode === 'url' && (
+                  <div>
+                    <input
+                      type="url"
+                      placeholder="https://... or /images/..."
+                      value={newProd.image}
+                      onChange={(e) => setNewProd({ ...newProd, image: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-secondary-dark border border-white/10 text-white focus:border-main-green focus:outline-none font-mono text-[11px]"
+                    />
+                  </div>
+                )}
+
+                {/* Live Preview Bar */}
+                {newProd.image && (
+                  <div className="flex items-center gap-3 pt-2 border-t border-white/10">
+                    <img
+                      src={newProd.image}
+                      alt="Selected preview"
+                      className="w-12 h-12 rounded-lg object-contain bg-black border border-white/15 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[10px] text-gray-400 block font-mono">Selected Image Source:</span>
+                      <p className="text-[11px] font-mono text-main-green truncate">{newProd.image}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

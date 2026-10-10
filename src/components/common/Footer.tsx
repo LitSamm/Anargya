@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <img
-                src="/images/LOGO-ANARGYA-INLINE.png"
+                src="/images/LOGO-ANARGYA-INLINE.webp"
                 alt="Anargya ITS Formula EV Team"
                 className="h-8 w-auto object-contain"
               />

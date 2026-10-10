@@ -11,8 +11,7 @@ import { CheckoutModal } from '../../components/med/CheckoutModal';
 import { ScrollReveal } from '../../components/common/ScrollReveal';
 import { useStore } from '../../context/StoreContext';
 import { Product } from '../../types';
-import { INITIAL_PRODUCTS } from '../../data/mockData';
-import { 
+import {
   Search, 
   Sparkles, 
   Zap,
@@ -32,23 +31,10 @@ export default function StorePage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
-  const categories = ['All', 'Apparel', 'Accessories', 'Collectibles'];
-  const storeProducts = INITIAL_PRODUCTS.map((catalogProduct) => {
-    const currentProduct = products.find((product) => product.id === catalogProduct.id);
-
-    return currentProduct
-      ? {
-          ...catalogProduct,
-          ...currentProduct,
-          name: catalogProduct.name,
-          description: catalogProduct.description,
-          image: catalogProduct.image,
-        }
-      : catalogProduct;
-  });
+  const categories = ['All', 'Apparel', 'Headwear', 'Accessories', 'Collectibles'];
 
   // Filtering
-  const filteredProducts = storeProducts.filter((p) => {
+  const filteredProducts = products.filter((p) => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.description.toLowerCase().includes(searchQuery.toLowerCase());

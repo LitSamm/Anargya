@@ -3,42 +3,42 @@
 import React from 'react';
 
 const TIER_1 = [
-  { name: 'Anargya 40 Wujudkan', logo: '/images/sponsors/ayo-rek.png' },
-  { name: 'RapidHarness', logo: '/images/sponsors/rapidharness.png' },
-  { name: 'Batemo', logo: '/images/sponsors/Batemo.png' },
+  { name: 'Anargya 40 Wujudkan', logo: '/images/sponsors/ayo-rek.webp' },
+  { name: 'RapidHarness', logo: '/images/sponsors/rapidharness.webp' },
+  { name: 'Batemo', logo: '/images/sponsors/Batemo.webp' },
 ];
 
 const TIER_2 = [
-  { name: 'Hasston', logo: '/images/sponsors/Hasston-Gold.png' },
-  { name: 'Spindo', logo: '/images/sponsors/Spindo-Silver.png' },
+  { name: 'Hasston', logo: '/images/sponsors/Hasston-Gold.webp' },
+  { name: 'Spindo', logo: '/images/sponsors/Spindo-Silver.webp' },
 ];
 
 const TIER_3 = [
-  { name: 'PLN Mobile', logo: '/images/sponsors/Pln-Mobile.png' },
-  { name: 'TDR Racing', logo: '/images/sponsors/TDR.png' },
-  { name: 'PT RAN Andalan Indonesia', logo: '/images/sponsors/RAN.png' },
+  { name: 'PLN Mobile', logo: '/images/sponsors/Pln-Mobile.webp' },
+  { name: 'TDR Racing', logo: '/images/sponsors/TDR.webp' },
+  { name: 'PT RAN Andalan Indonesia', logo: '/images/sponsors/RAN.webp' },
 ];
 
 const MARQUEE_SPONSORS = [
-  { name: 'Nexa Logistic', logo: '/images/sponsors/Nexo.png' },
-  { name: 'Wilson Cables', logo: '/images/sponsors/Wilson.png' },
-  { name: 'Grab', logo: '/images/sponsors/Grab.png' },
-  { name: 'Bender', logo: '/images/sponsors/Bender.png' },
-  { name: 'PGN Saka', logo: '/images/sponsors/PGN-Saka.png' },
-  { name: 'Suspension', logo: '/images/sponsors/Suspension.png' },
-  { name: 'IPG', logo: '/images/sponsors/IPG.png' },
-  { name: 'Tridiku', logo: '/images/sponsors/Tridiku.png' },
-  { name: 'SDI', logo: '/images/sponsors/SDI.png' },
-  { name: 'Spectrum', logo: '/images/sponsors/Spectrum.png' },
-  { name: 'Honda', logo: '/images/sponsors/Honda.png' },
-  { name: 'Memoji Studio', logo: '/images/sponsors/Memoji.png' },
-  { name: 'Belkote', logo: '/images/sponsors/Belkote.png' },
-  { name: 'PJ Graphics', logo: '/images/sponsors/PJ-Graphics.png' },
-  { name: 'Blink Car Studio', logo: '/images/sponsors/Blink.png' },
-  { name: 'Seni Jayaplast', logo: '/images/sponsors/Seni-Jayaplast.png' },
-  { name: 'Bodok LNG', logo: '/images/sponsors/Bodok-LNG.png' },
-  { name: 'Pertamina', logo: '/images/sponsors/Pertamina.png' },
-  { name: 'JNE', logo: '/images/sponsors/JNE.png' },
+  { name: 'Nexa Logistic', logo: '/images/sponsors/Nexo.webp' },
+  { name: 'Wilson Cables', logo: '/images/sponsors/Wilson.webp' },
+  { name: 'Grab', logo: '/images/sponsors/Grab.webp' },
+  { name: 'Bender', logo: '/images/sponsors/Bender.webp' },
+  { name: 'PGN Saka', logo: '/images/sponsors/PGN-Saka.webp' },
+  { name: 'Suspension', logo: '/images/sponsors/Suspension.webp' },
+  { name: 'IPG', logo: '/images/sponsors/IPG.webp' },
+  { name: 'Tridiku', logo: '/images/sponsors/Tridiku.webp' },
+  { name: 'SDI', logo: '/images/sponsors/SDI.webp' },
+  { name: 'Spectrum', logo: '/images/sponsors/Spectrum.webp' },
+  { name: 'Honda', logo: '/images/sponsors/Honda.webp' },
+  { name: 'Memoji Studio', logo: '/images/sponsors/Memoji.webp' },
+  { name: 'Belkote', logo: '/images/sponsors/Belkote.webp' },
+  { name: 'PJ Graphics', logo: '/images/sponsors/PJ-Graphics.webp' },
+  { name: 'Blink Car Studio', logo: '/images/sponsors/Blink.webp' },
+  { name: 'Seni Jayaplast', logo: '/images/sponsors/Seni-Jayaplast.webp' },
+  { name: 'Bodok LNG', logo: '/images/sponsors/Bodok-LNG.webp' },
+  { name: 'Pertamina', logo: '/images/sponsors/Pertamina.webp' },
+  { name: 'JNE', logo: '/images/sponsors/JNE.webp' },
 ];
 
 export const SponsorsSection: React.FC = () => {

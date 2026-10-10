@@ -41,6 +41,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   if (!isOpen) return null;
 
@@ -55,7 +56,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }).format(val);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone || !formData.address) {
       alert('Please fill out all required customer shipping fields.');
@@ -63,36 +64,40 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
 
     setIsSubmitting(true);
+    setSubmitError('');
 
-    setTimeout(() => {
-      const newOrder = createOrder({
-        customerName: formData.name,
-        customerEmail: formData.email,
-        customerPhone: formData.phone,
-        shippingAddress: `${formData.address}, ${formData.city}`,
-        courier: formData.courier,
-        paymentMethod: formData.paymentMethod,
-        items: [...cart],
-        totalAmount: grandTotal,
+    const result = await createOrder({
+      customerName: formData.name,
+      customerEmail: formData.email,
+      customerPhone: formData.phone,
+      shippingAddress: `${formData.address}, ${formData.city}`,
+      courier: formData.courier,
+      paymentMethod: formData.paymentMethod,
+      items: [...cart],
+      totalAmount: grandTotal,
+    });
+
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      setSubmitError(result.error);
+      return;
+    }
+
+    setCompletedOrder(result.order);
+
+    try {
+      confetti({
+        particleCount: 120,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#00FF66', '#FFFFFF', '#FF2A55'],
       });
+    } catch {
+      // fail silently if canvas not available
+    }
 
-      setCompletedOrder(newOrder);
-      setIsSubmitting(false);
-
-      // Trigger Confetti Celebration
-      try {
-        confetti({
-          particleCount: 120,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#00FF66', '#FFFFFF', '#FF2A55'],
-        });
-      } catch (err) {
-        // fail silently if canvas not available
-      }
-
-      if (onOrderComplete) onOrderComplete(newOrder);
-    }, 600);
+    if (onOrderComplete) onOrderComplete(result.order);
   };
 
   const copyToClipboard = (text: string) => {
@@ -142,7 +147,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
 
               <h4 className="text-2xl font-black text-white mb-1">
-                Order #{completedOrder.id} Placed!
+                Order #{completedOrder.orderNumber} Placed!
               </h4>
               <p className="text-xs text-gray-300 max-w-md mx-auto mb-6">
                 Your order has been recorded into the Anargya Paddock management system.
@@ -351,6 +356,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <span className="text-main-green font-mono text-base">{formatIDR(grandTotal)}</span>
                 </div>
               </div>
+
+              {submitError && (
+                <div className="p-3 rounded-xl bg-main-red/10 border border-main-red/30 text-main-red text-xs font-medium text-center">
+                  {submitError}
+                </div>
+              )}
 
               {/* Submit */}
               <button

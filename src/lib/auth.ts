@@ -63,3 +63,9 @@ export async function isAuthenticatedAdmin(): Promise<boolean> {
     return false;
   }
 }
+
+/** Guard for server actions that mutate or expose admin-only data. */
+export async function requireAdmin(): Promise<{ ok: true } | { ok: false; error: string }> {
+  const authed = await isAuthenticatedAdmin();
+  return authed ? { ok: true } : { ok: false, error: 'Unauthorized: admin login required' };
+}

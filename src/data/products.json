@@ -1,0 +1,55 @@
+[
+  {
+    "id": "prod-tee-blueprint",
+    "name": "Mark 5.0 Blueprint Tee",
+    "category": "Apparel",
+    "price": 115000,
+    "stock": 48,
+    "description": "Official cotton tee with the Anargya emblem on the chest and a full Mark 5.0 / #E71 technical blueprint print on the back. Available in white and black colorways. Crew-neck cut with ITS Automotive Team marks on the artwork.",
+    "image": "/images/Tee.webp",
+    "badge": "Best Seller",
+    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "rating": 4.9,
+    "reviewsCount": 88,
+    "inStock": true
+  },
+  {
+    "id": "prod-sticker-pack",
+    "name": "A(N)rticle 01 Sticker Pack",
+    "category": "Accessories",
+    "price": 10000,
+    "stock": 80,
+    "description": "Official Anargya sticker pack: driver mascot, Mark 5.0 car cuts, “Sobat Bengkel Kuning” nametag, CH453-TH3 Limit plate, and Anargya ITS 18 strip. Waterproof vinyl for laptops, bottles, and toolboxes.",
+    "image": "/images/Sticker Pack.webp",
+    "badge": "Limited 9th Gen",
+    "rating": 4.8,
+    "reviewsCount": 153,
+    "inStock": true
+  },
+  {
+    "id": "prod-tumbler-racing",
+    "name": "Anargya Achievement Tumbler",
+    "category": "Accessories",
+    "price": 189000,
+    "stock": 35,
+    "description": "Mint stainless tumbler with the Anargya emblem, Indonesia-Japan-Australia flags, competition laurels, and a Mark 5.0 car illustration. Double-wall vacuum insulation for paddock coffee or cold drinks on the go.",
+    "image": "/images/Tumbler.webp",
+    "badge": "Special Edition",
+    "rating": 4.9,
+    "reviewsCount": 72,
+    "inStock": true
+  },
+  {
+    "id": "prod-enamel-pin",
+    "name": "Anargya Logo Enamel Pin",
+    "category": "Collectibles",
+    "price": 25000,
+    "stock": 90,
+    "description": "Hard enamel pin of the Anargya infinity mark in green, red, and black with a silver metal outline and “ANARGYA” wordmark. Rubber clutch back. Wear it on a jacket, lanyard, or backpack.",
+    "image": "/images/enamel.webp",
+    "badge": "Best Seller",
+    "rating": 5.0,
+    "reviewsCount": 45,
+    "inStock": true
+  }
+]

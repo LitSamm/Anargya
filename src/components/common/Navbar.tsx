@@ -51,12 +51,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCart }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group min-w-0">
             <img
-              src="/images/LOGO-POLOS.png"
+              src="/images/LOGO-POLOS.webp"
               alt="Anargya"
-              className="h-8 sm:h-9 w-auto object-contain brightness-110"
+              className="h-6 sm:h-6 w-auto object-contain brightness-110"
             />
             <div className="hidden sm:flex flex-col border-l border-white/15 pl-3">
-              <span className="font-bold text-sm tracking-wide text-white leading-none">Anargya</span>
+              <span className="font-codec-cold text-sm tracking-wider text-white leading-none uppercase">Anargya</span>
               <span className="text-[9px] uppercase tracking-[0.22em] text-main-green mt-1 font-semibold">ITS EV Team</span>
             </div>
           </Link>
@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCart }) => {
           >
             <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-6">
               <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3">
-                <img src="/images/LOGO-POLOS.png" alt="Anargya" className="h-8 w-auto object-contain" />
+                <img src="/images/LOGO-POLOS.webp" alt="Anargya" className="h-8 w-auto object-contain" />
                 <div>
                   <p className="font-codec-cold text-sm tracking-wider text-white">ANARGYA</p>
                   <p className="mt-1 text-[9px] uppercase tracking-[0.24em] text-main-green">ITS EV TEAM</p>

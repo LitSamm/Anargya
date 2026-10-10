@@ -39,22 +39,23 @@ export interface OrderItem {
   productId: string;
   productName: string;
   productPrice: number;
-  productImage: string;
+  productImage?: string;
   quantity: number;
   selectedSize?: string;
 }
 
 export interface Order {
   id: string;
+  orderNumber: string;
   customerName: string;
   customerEmail: string;
-  customerPhone: string;
-  shippingAddress: string;
-  courier: string;
-  paymentMethod: string;
+  customerPhone?: string;
+  shippingAddress?: string;
+  courier?: string;
+  paymentMethod?: string;
   items: OrderItem[];
   totalAmount: number;
-  status: 'Pending' | 'Confirmed' | 'Shipped' | 'Completed';
+  status: 'Pending' | 'Confirmed' | 'Shipped' | 'Completed' | 'Cancelled';
   createdAt: string;
 }
 

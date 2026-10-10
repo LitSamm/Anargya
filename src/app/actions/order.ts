@@ -90,7 +90,11 @@ function safeRevalidate(pathStr: string) {
   } catch {}
 }
 
-export async function createOrder(data: CreateOrderInput) {
+export type CreateOrderResult =
+  | { success: true; data: StoredOrder; error?: never }
+  | { success: false; error: string; data?: never }
+
+export async function createOrder(data: CreateOrderInput): Promise<CreateOrderResult> {
   const orderNumber =
     data.orderNumber ||
     `ARG-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`
@@ -123,42 +127,50 @@ export async function createOrder(data: CreateOrderInput) {
 
     safeRevalidate('/admin')
     return { success: true, data: order }
-  } catch {
-    // If PostgreSQL is unreachable or fails credentials, fall back to persistent local storage
-    const local = readLocalOrders()
-    const orderId = `ord-${Date.now()}`
-    const now = new Date()
+  } catch (error: any) {
+    try {
+      // If PostgreSQL is unreachable or fails credentials, fall back to persistent local storage
+      const local = readLocalOrders()
+      const orderId = `ord-${Date.now()}`
+      const now = new Date()
 
-    const newOrder: StoredOrder = {
-      id: orderId,
-      orderNumber,
-      customerName: data.customerName,
-      customerEmail: data.customerEmail,
-      customerPhone: data.customerPhone ?? null,
-      shippingAddress: data.shippingAddress ?? null,
-      courier: data.courier ?? null,
-      paymentMethod: data.paymentMethod ?? null,
-      totalAmount: data.totalAmount,
-      status: 'Pending',
-      createdAt: now,
-      updatedAt: now,
-      items: data.items.map((item, idx) => ({
-        id: `item-${Date.now()}-${idx}`,
-        orderId,
-        productId: item.productId,
-        productName: item.productName,
-        productPrice: item.productPrice,
-        productImage: item.productImage ?? null,
-        selectedSize: item.selectedSize ?? null,
-        quantity: item.quantity,
+      const newOrder: StoredOrder = {
+        id: orderId,
+        orderNumber,
+        customerName: data.customerName,
+        customerEmail: data.customerEmail,
+        customerPhone: data.customerPhone ?? null,
+        shippingAddress: data.shippingAddress ?? null,
+        courier: data.courier ?? null,
+        paymentMethod: data.paymentMethod ?? null,
+        totalAmount: data.totalAmount,
+        status: 'Pending',
         createdAt: now,
-      })),
-    }
+        updatedAt: now,
+        items: data.items.map((item, idx) => ({
+          id: `item-${Date.now()}-${idx}`,
+          orderId,
+          productId: item.productId,
+          productName: item.productName,
+          productPrice: item.productPrice,
+          productImage: item.productImage ?? null,
+          selectedSize: item.selectedSize ?? null,
+          quantity: item.quantity,
+          createdAt: now,
+        })),
+      }
 
-    local.unshift(newOrder)
-    writeLocalOrders(local)
-    safeRevalidate('/admin')
-    return { success: true, data: newOrder }
+      local.unshift(newOrder)
+      writeLocalOrders(local)
+      safeRevalidate('/admin')
+      return { success: true, data: newOrder }
+    } catch (fallbackError: any) {
+      console.error('Failed creating order in fallback:', fallbackError)
+      return {
+        success: false,
+        error: fallbackError?.message || error?.message || 'Failed to create order',
+      }
+    }
   }
 }
 

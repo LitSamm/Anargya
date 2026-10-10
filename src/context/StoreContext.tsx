@@ -178,8 +178,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     if (!res.success || !res.data) {
-      addToast(res.error || 'Failed to place order', 'warning');
-      return { success: false, error: res.error || 'Failed to place order' };
+      const errorMsg = 'error' in res && res.error ? res.error : 'Failed to place order';
+      addToast(errorMsg, 'warning');
+      return { success: false, error: errorMsg };
     }
 
     const order: Order = {

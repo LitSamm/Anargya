@@ -159,8 +159,9 @@ export default function AdminPage() {
       } else {
         const reader = new FileReader();
         reader.onload = (ev) => {
-          if (ev.target?.result) {
-            setNewProd((prev) => ({ ...prev, image: ev.target.result as string }));
+          const resStr = ev.target?.result;
+          if (typeof resStr === 'string') {
+            setNewProd((prev) => ({ ...prev, image: resStr }));
           }
         };
         reader.readAsDataURL(file);
@@ -168,8 +169,9 @@ export default function AdminPage() {
     } catch {
       const reader = new FileReader();
       reader.onload = (ev) => {
-        if (ev.target?.result) {
-          setNewProd((prev) => ({ ...prev, image: ev.target.result as string }));
+        const resStr = ev.target?.result;
+        if (typeof resStr === 'string') {
+          setNewProd((prev) => ({ ...prev, image: resStr }));
         }
       };
       reader.readAsDataURL(file);

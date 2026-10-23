@@ -41,22 +41,10 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-### 3. Konfigurasi Database (Opsional)
-Jika Anda menggunakan PostgreSQL, buat database `anargya_db` dan sesuaikan connection string di `.env`:
-```dotenv
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/anargya_db?schema=public"
-DIRECT_URL="postgresql://USER:PASSWORD@localhost:5432/anargya_db?schema=public"
-```
-
-Lalu sinkronkan skema database:
-```bash
-npx prisma generate
-npx prisma db push
-```
-
 *(Jika tidak menggunakan PostgreSQL, lewati langkah ini — aplikasi akan otomatis menggunakan penyimpanan lokal).*
 
-### 4. Jalankan Development Server
+### 3
+. Jalankan Development Server
 ```bash
 npm run dev
 ```

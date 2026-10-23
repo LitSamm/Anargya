@@ -6,11 +6,11 @@ Platform digital resmi dan merchandise store untuk **Anargya ITS EV Team** (Form
 
 ## Fitur Utama
 
-- 🏎️ **Fleet Showcase**: Informasi spesifikasi teknis dan histori mobil balap Formula EV (Mark 1.0 hingga Mark 6.0).
-- 🛍️ **Official Merchandise Store**: Katalog produk, varian ukuran, dan keranjang belanja interaktif.
-- 💳 **Online Checkout**: Formulir pemesanan dengan kalkulasi otomatis dan integrasi WhatsApp.
-- ⚙️ **Admin Dashboard**: Manajemen produk (tambah, edit, hapus, upload foto) dan pemantauan status pesanan.
-- 📱 **PWA Ready**: Mendukung Progressive Web App untuk pengalaman akses cepat di perangkat mobile.
+- **Fleet Showcase**: Informasi spesifikasi teknis dan histori mobil balap Formula EV (Mark 1.0 hingga Mark 6.0).
+- **Official Merchandise Store**: Katalog produk, varian ukuran, dan keranjang belanja interaktif.
+- **Online Checkout**: Formulir pemesanan dengan kalkulasi otomatis dan integrasi WhatsApp.
+- **Admin Dashboard**: Manajemen produk (tambah, edit, hapus, upload foto) dan pemantauan status pesanan.
+- **PWA Ready**: Mendukung Progressive Web App untuk pengalaman akses cepat di perangkat mobile.
 
 ---
 
@@ -43,7 +43,7 @@ Copy-Item .env.example .env
 
 *(Jika tidak menggunakan PostgreSQL, lewati langkah ini — aplikasi akan otomatis menggunakan penyimpanan lokal).*
 
-### 3
+### 3 Run Dev
 . Jalankan Development Server
 ```bash
 npm run dev
@@ -57,12 +57,6 @@ Buka browser di [http://localhost:3000](http://localhost:3000).
 - **Halaman Utama**: `/`
 - **Official Store**: `/store`
 - **Admin Dashboard**: `/admin`
-
-### Kredensial Default Admin:
-- **Username**: `admin`
-- **Password**: `anargya2026`
-
-> Anda dapat mengubah kredensial melalui variabel `ADMIN_USER`, `ADMIN_PASSWORD`, dan `ADMIN_SECRET` di file `.env`.
 
 ---
 

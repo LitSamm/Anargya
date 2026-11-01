@@ -43,7 +43,7 @@ Copy-Item .env.example .env
 
 *(Jika tidak menggunakan PostgreSQL, lewati langkah ini — aplikasi akan otomatis menggunakan penyimpanan lokal).*
 
-### 3 Run Dev
+### 3. Run Dev
 . Jalankan Development Server
 ```bash
 npm run dev
